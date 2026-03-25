@@ -1,0 +1,40 @@
+<%- include('partials/header') %>
+
+<h3>Order #<%= order._id %></h3>
+<div class="card mb-3">
+  <div class="card-body">
+    <h5>Customer</h5>
+    <p><strong><%= order.customerName %></strong><br>
+    Phone: <%= order.phone %><br>
+    Address: <%= order.address || '---' %></p>
+
+    <h5>Items</h5>
+    <ul>
+      <% order.items.forEach(it => { %>
+        <li><%= it.name %> — x<%= it.qty %> — Rs. <%= it.price %></li>
+      <% }) %>
+    </ul>
+
+    <h5>Total: Rs. <%= order.total %></h5>
+
+    <form method="POST" action="/admin/orders/<%= order._id %>/status" class="mt-3">
+      <div class="row g-2 align-items-center">
+        <div class="col-auto">
+          <select name="status" class="form-select">
+            <% ['Pending','Preparing','Out for Delivery','Delivered','Cancelled'].forEach(s => { %>
+              <option value="<%= s %>" <%= s === order.status ? 'selected' : '' %>><%= s %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="col-auto">
+          <button class="btn btn-success">Update Status</button>
+        </div>
+        <div class="col-auto">
+          <a href="/admin/orders" class="btn btn-secondary">Back</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<%- include('partials/footer') %>
