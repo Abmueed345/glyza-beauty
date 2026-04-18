@@ -51,7 +51,7 @@ mongoose.connect(MONGODB_URI, {
 })
 .then(() => {
   console.log('✅ MongoDB Atlas Connected Successfully!');
-  console.log(`📊 Database: Glyza Beauty`);
+  console.log(`📊 Database: HAM LUXURY PERFUME`);
 })
 .catch((err) => {
   console.error('❌ MongoDB Atlas Connection Error:', err.message);
