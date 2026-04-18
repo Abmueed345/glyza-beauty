@@ -1,7 +1,13 @@
+// const express = require("express");
+// const jwt = require("jsonwebtoken");
+// const bcrypt = require("bcrypt");
+// const Admin = require("../models/Admin"); // ensure correct path
+// const router = express.Router();
+
 const express = require("express");
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
-const Admin = require("../models/Admin"); // ensure correct path
+const bcrypt = require("bcryptjs");  // ✅ FIXED!
+const Admin = require("../models/Admin");
 const router = express.Router();
 
 const SECRET_KEY = "mysecretkey"; // aap chahe to .env me rakh sakte ho
