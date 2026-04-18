@@ -1,8 +1,14 @@
 // routes/authRoutes.js
+// const express = require('express');
+// const router = express.Router();
+// const jwt = require('jsonwebtoken');
+// const bcrypt = require('bcrypt');
+// const Admin = require('../models/Admin');
+
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');  // ✅ CHANGE THIS LINE!
 const Admin = require('../models/Admin');
 
 const SECRET_KEY = process.env.JWT_SECRET || 'mysecretkey';
