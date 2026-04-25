@@ -59,8 +59,9 @@
   
   <!-- ✅ Preload Critical Resources -->
   <link rel="preload" href="assets/img/logo-removebg-preview.png" as="image">
-  <link rel="preload" href="assets/img/jojo.png" as="image" media="(max-width: 768px)">
-  <link rel="dns-prefetch" href="//hamluxuryperfume.onrender.com">
+  <link rel="preload" href="assets/img/banner1.jpeg" as="image" media="(max-width: 768px)">
+  <!-- Head mein ye line dhundo aur replace karo -->
+<link rel="dns-prefetch" href="//hamluxuryperfume-9iwo.onrender.com">
   
   <!-- ✅ JSON-LD Schema.org (VIP E-commerce SEO) -->
   <script type="application/ld+json">
@@ -83,7 +84,7 @@
     "paymentAccepted": "Cash on Delivery",
     "sameAs": [
       "https://www.facebook.com/share/1FGhS5qXMZ/",
-      "https://www.instagram.com/glyza_beauty"
+      "https://www.instagram.com/ham_luxury_perfume?igsh=MTd0MTYwMDF1Mm9jeg==",
     ],
     "openingHours": "Mo-Su 09:00-22:00",
     "hasOfferCatalog": {
@@ -1909,7 +1910,7 @@ footer p.mb-0 {
       <a href="https://www.facebook.com/share/1FGhS5qXMZ/" target="_blank" rel="noopener noreferrer" title="Facebook">
         <i class="fab fa-facebook-f"></i>
       </a>
-      <a href="https://www.instagram.com/glyza_beauty?igsh=YjBqejByZTU3ams=" target="_blank" rel="noopener noreferrer" title="Instagram">
+      <a href="https://www.instagram.com/ham_luxury_perfume?igsh=MTd0MTYwMDF1Mm9jeg==" target="_blank" rel="noopener noreferrer" title="Instagram">
         <i class="fab fa-instagram"></i>
       </a>
       <a href="https://www.tiktok.com/@glyza_beauty?_r=1&_t=ZS-94zOtsCwx4y" target="_blank" rel="noopener noreferrer" title="TikTok">
@@ -2082,18 +2083,18 @@ footer p.mb-0 {
               `}
             </div>
             
-            <button class="btn btn-luxury btn-sm w-100 mb-2 view-details-btn"
-                    data-bs-toggle="modal" data-bs-target="#productModal"
-                    data-id="${product.id || product._id}"
-                    data-name="${product.name}"
-                    data-price="${product.price}"
-                    data-original-price="${product.originalPrice || ''}"
-                    data-image="${imageUrl}"
-                    data-description="${product.description || 'Premium luxury fragrance'}"
-                    data-notes="${product.notes || 'Multiple variants available'}"
-                    data-category="${product.category}">
-              <i class="fas fa-eye me-1"></i>View Details
-            </button>
+                        
+              <button class="btn btn-luxury btn-sm w-100 mb-2 view-details-btn"
+                      data-id="${product.id || product._id}"
+                      data-name="${product.name}"
+                      data-price="${product.price}"
+                      data-original-price="${product.originalPrice || ''}"
+                      data-image="${imageUrl}"
+                      data-description="${product.description || 'Premium luxury fragrance'}"
+                      data-notes="${product.notes || 'Multiple variants available'}"
+                      data-category="${product.category}">
+                <i class="fas fa-eye me-1"></i>View Details
+              </button>
             <button class="btn btn-add-cart w-100 add-to-cart"
                     data-id="${product.id || product._id}"
                     data-name="${product.name}"
@@ -2126,14 +2127,31 @@ footer p.mb-0 {
     document.getElementById('searchBox').addEventListener('input', handleSearch);
   }
 
+  // function attachProductEventListeners() {
+  //   document.querySelectorAll('.add-to-cart').forEach(btn => {
+  //     btn.addEventListener('click', handleAddToCart);
+  //   });
+
   function attachProductEventListeners() {
-    document.querySelectorAll('.add-to-cart').forEach(btn => {
-      btn.addEventListener('click', handleAddToCart);
+  // Add to Cart buttons
+  document.querySelectorAll('.add-to-cart').forEach(btn => {
+    btn.addEventListener('click', handleAddToCart);
+  });
+
+  //   document.querySelectorAll('.view-details-btn').forEach(btn => {
+  //     btn.addEventListener('click', handleViewDetails);
+  //   });
+  // }
+
+   document.querySelectorAll('.view-details-btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      handleViewDetails(e);
+      // Manually show modal after setting data
+      const modal = new bootstrap.Modal(document.getElementById('productModal'));
+      modal.show();
     });
-    document.querySelectorAll('.view-details-btn').forEach(btn => {
-      btn.addEventListener('click', handleViewDetails);
-    });
-  }
+  });
+}
 
   function handleAddToCart(e) {
     e.preventDefault();
@@ -2157,28 +2175,95 @@ footer p.mb-0 {
     showAddToCartFeedback(btn);
   }
 
-  function handleViewDetails(e) {
-    currentProduct = {
-      id: e.currentTarget.dataset.id,
-      name: e.currentTarget.dataset.name,
-      price: parseInt(e.currentTarget.dataset.price),
-      originalPrice: e.currentTarget.dataset.originalPrice ? parseInt(e.currentTarget.dataset.originalPrice) : null,
-      image: e.currentTarget.dataset.image,
-      description: e.currentTarget.dataset.description,
-      notes: e.currentTarget.dataset.notes,
-      category: e.currentTarget.dataset.category,
-      whatsappText: `Hi! I want to order:\n\n${e.currentTarget.dataset.name}\nPrice: Rs ${e.currentTarget.dataset.price}\n\nPlease send details.`
+  // function handleViewDetails(e) {
+  //   currentProduct = {
+  //     id: e.currentTarget.dataset.id,
+  //     name: e.currentTarget.dataset.name,
+  //     price: parseInt(e.currentTarget.dataset.price),
+  //     originalPrice: e.currentTarget.dataset.originalPrice ? parseInt(e.currentTarget.dataset.originalPrice) : null,
+  //     image: e.currentTarget.dataset.image,
+  //     description: e.currentTarget.dataset.description,
+  //     notes: e.currentTarget.dataset.notes,
+  //     category: e.currentTarget.dataset.category,
+  //     whatsappText: `Hi! I want to order:\n\n${e.currentTarget.dataset.name}\nPrice: Rs ${e.currentTarget.dataset.price}\n\nPlease send details.`
+  //   };
+  // }
+
+  // YE FUNCTION REPLACE KARO (line ~450 ke around)
+function handleViewDetails(e) {
+  e.preventDefault(); // Prevent default behavior
+  e.stopPropagation();
+  
+  // Get data from button attributes
+  currentProduct = {
+    id: e.currentTarget.dataset.id,
+    name: e.currentTarget.dataset.name,
+    price: parseInt(e.currentTarget.dataset.price),
+    originalPrice: e.currentTarget.dataset.originalPrice ? parseInt(e.currentTarget.dataset.originalPrice) : null,
+    image: e.currentTarget.dataset.image,
+    description: e.currentTarget.dataset.description || 'Premium luxury fragrance with long-lasting scent.',
+    notes: e.currentTarget.dataset.notes || 'Multiple shades available',
+    category: e.currentTarget.dataset.category,
+    whatsappText: `Hi! I want to order:\n\n${e.currentTarget.dataset.name}\nPrice: Rs ${e.currentTarget.dataset.price}\n\nPlease send details.`
+  };
+  
+  console.log('Current Product Set:', currentProduct); // Debug ke liye
+}
+
+  // function populateProductModal() {
+  //   if (!currentProduct) return;
+
+  //   document.getElementById('modalProductImage').src = currentProduct.image;
+  //   document.getElementById('modalProductName').textContent = currentProduct.name;
+  //   document.getElementById('modalProductCategory').textContent = currentProduct.category;
+  //   document.getElementById('modalProductDescription').textContent = currentProduct.description;
+    
+  //   const priceEl = document.getElementById('modalProductPrice');
+  //   const originalPriceEl = document.getElementById('modalOriginalPrice');
+  //   const discountEl = document.getElementById('modalDiscountInfo');
+    
+  //   priceEl.textContent = `Rs ${currentProduct.price.toLocaleString()}`;
+    
+  //   if (currentProduct.originalPrice) {
+  //     originalPriceEl.textContent = `Rs ${currentProduct.originalPrice.toLocaleString()}`;
+  //     originalPriceEl.style.display = 'inline';
+      
+  //     const discount = Math.round(((currentProduct.originalPrice - currentProduct.price) / currentProduct.originalPrice) * 100);
+  //     const savings = currentProduct.originalPrice - currentProduct.price;
+  //     discountEl.innerHTML = `Save Rs ${savings.toLocaleString()} <strong>(${discount}% OFF)</strong>`;
+  //     discountEl.style.display = 'inline-block';
+  //   } else {
+  //     originalPriceEl.style.display = 'none';
+  //     discountEl.style.display = 'none';
+  //   }
+    
+  //   populateShadeSelector();
+  //    setupModalWhatsAppBtn();
+  // }
+
+  function populateProductModal(event) {
+  // Small delay to ensure currentProduct is set
+  setTimeout(() => {
+    if (!currentProduct) {
+      console.error('No product data available!');
+      return;
+    }
+
+    console.log('Populating modal with:', currentProduct); // Debug
+    
+    // Image
+    const img = document.getElementById('modalProductImage');
+    img.src = currentProduct.image;
+    img.onerror = function() {
+      this.src = 'https://images.unsplash.com/photo-1574169208507-84376144848b?auto=format&fit=crop&w=600&q=80';
     };
-  }
-
-  function populateProductModal() {
-    if (!currentProduct) return;
-
-    document.getElementById('modalProductImage').src = currentProduct.image;
+    
+    // Other fields
     document.getElementById('modalProductName').textContent = currentProduct.name;
     document.getElementById('modalProductCategory').textContent = currentProduct.category;
     document.getElementById('modalProductDescription').textContent = currentProduct.description;
     
+    // Price logic
     const priceEl = document.getElementById('modalProductPrice');
     const originalPriceEl = document.getElementById('modalOriginalPrice');
     const discountEl = document.getElementById('modalDiscountInfo');
@@ -2192,15 +2277,16 @@ footer p.mb-0 {
       const discount = Math.round(((currentProduct.originalPrice - currentProduct.price) / currentProduct.originalPrice) * 100);
       const savings = currentProduct.originalPrice - currentProduct.price;
       discountEl.innerHTML = `Save Rs ${savings.toLocaleString()} <strong>(${discount}% OFF)</strong>`;
-      discountEl.style.display = 'inline-block';
+      discountEl.style.display = 'block';
     } else {
       originalPriceEl.style.display = 'none';
       discountEl.style.display = 'none';
     }
     
     populateShadeSelector();
-     setupModalWhatsAppBtn();
-  }
+    setupModalWhatsAppBtn();
+  }, 100);
+}
 
     function populateShadeSelector() {
     const shades = currentProduct.notes.split(': ')[1]?.split(', ') || ['Standard'];
