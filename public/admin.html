@@ -1544,9 +1544,60 @@ function escapeHtml(str){
   return div.innerHTML;
 }
 
-/* --------------------------- FILE UPLOAD HANDLER (NEW) ---------------------------- */
+// /* --------------------------- FILE UPLOAD HANDLER (NEW) ---------------------------- */
+// document.addEventListener('DOMContentLoaded', function() {
+//   // File upload handler
+//   const fileInput = document.getElementById('pimageFile');
+//   if (fileInput) {
+//     fileInput.addEventListener('change', async function(e) {
+//       const file = e.target.files[0];
+//       if (!file) return;
+      
+//       const progressEl = document.getElementById('uploadProgress');
+//       const spinnerEl = document.getElementById('uploadSpinner');
+//       const imageUrlEl = document.getElementById('pimage');
+      
+//       spinnerEl.style.display = 'block';
+//       progressEl.style.display = 'none';
+      
+//       try {
+//         const formData = new FormData();
+//         formData.append('image', file);
+        
+//         const res = await authFetch('/api/upload', {
+//           method: 'POST',
+//           body: formData
+//         });
+        
+//         if (res.ok) {
+//           const data = await res.json();
+//           imageUrlEl.value = data.url;
+          
+//           spinnerEl.style.display = 'none';
+//           progressEl.style.display = 'block';
+//           progressEl.innerHTML = '<i class="fas fa-check"></i> Uploaded!';
+//           progressEl.style.color = '#10B981';
+          
+//           setTimeout(() => {
+//             progressEl.style.display = 'none';
+//           }, 3000);
+//         } else {
+//           throw new Error('Upload failed');
+//         }
+//       } catch (err) {
+//         spinnerEl.style.display = 'none';
+//         progressEl.style.display = 'block';
+//         progressEl.innerHTML = '<i class="fas fa-times"></i> Upload failed';
+//         progressEl.style.color = '#EF4444';
+//         alert('Image upload failed. Please try again.');
+//         console.error('Upload error:', err);
+//       }
+//     });
+//   }
+// });
+
+/* --------------------------- FIXED FILE UPLOAD HANDLER ---------------------------- */
 document.addEventListener('DOMContentLoaded', function() {
-  // File upload handler
   const fileInput = document.getElementById('pimageFile');
   if (fileInput) {
     fileInput.addEventListener('change', async function(e) {
@@ -1559,6 +1610,7 @@ document.addEventListener('DOMContentLoaded', function() {
       
       spinnerEl.style.display = 'block';
       progressEl.style.display = 'none';
+      imageUrlEl.value = 'Uploading...';
       
       try {
         const formData = new FormData();
@@ -1569,28 +1621,39 @@ document.addEventListener('DOMContentLoaded', function() {
           body: formData
         });
         
-        if (res.ok) {
-          const data = await res.json();
-          imageUrlEl.value = data.url;
-          
-          spinnerEl.style.display = 'none';
-          progressEl.style.display = 'block';
-          progressEl.innerHTML = '<i class="fas fa-check"></i> Uploaded!';
-          progressEl.style.color = '#10B981';
-          
-          setTimeout(() => {
-            progressEl.style.display = 'none';
-          }, 3000);
-        } else {
-          throw new Error('Upload failed');
+        if (!res.ok) {
+          const errorData = await safeJson(res);
+          throw new Error(errorData?.error || 'Upload failed');
         }
+        
+        const data = await res.json();
+        console.log('✅ Upload success:', data.url); // Debug
+        
+        // ✅ FIXED: Force HTTPS
+        let finalUrl = data.url;
+        if (window.location.protocol === 'https:' && finalUrl.startsWith('http://')) {
+          finalUrl = finalUrl.replace('http://', 'https://');
+        }
+        
+        imageUrlEl.value = finalUrl;
+        
+        spinnerEl.style.display = 'none';
+        progressEl.style.display = 'block';
+        progressEl.innerHTML = '<i class="fas fa-check"></i> Uploaded!';
+        progressEl.style.color = '#10B981';
+        
+        setTimeout(() => {
+          progressEl.style.display = 'none';
+        }, 3000);
+        
       } catch (err) {
+        console.error('❌ Upload failed:', err);
         spinnerEl.style.display = 'none';
         progressEl.style.display = 'block';
         progressEl.innerHTML = '<i class="fas fa-times"></i> Upload failed';
         progressEl.style.color = '#EF4444';
-        alert('Image upload failed. Please try again.');
-        console.error('Upload error:', err);
+        imageUrlEl.value = '';
+        alert('Image upload failed: ' + err.message);
       }
     });
   }
@@ -1632,10 +1695,14 @@ async function fetchProducts(){
       
       div.innerHTML = `
         <div class="product-meta">
-          <img class="product-thumb" src="${escapeHtml(imageSrc)}" 
-               alt="${escapeHtml(p.name)}" 
-               loading="lazy"
-               onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzIiIGhlaWdodD0iNzIiIHZpZXdCb3g9IjAgMCA3MiA3MiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzYiIGN5PSIzNiIgcj0iMzYiIGZpbGw9ImxpbmVhci1ncmFkaWVudCgxMzVkZywjOUI1Q0Y2IDAlLCAjQzg4NEZDOCAxMDAlIi8+Cjx0ZXh0IHg9IjM2IiB5PSI0OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iIGZpbGw9IndoaXRlIiBmb250LWZhbWlseT0iUG9wcGlucywgc2Fucy1zZXJpZiIgZm9udC13ZWlnaHQ9IjciIGZvbnQtc2l6ZT0iMTIiPkVycm9yPC90ZXh0Pgo8L3N2Zz4='">
+          <!-- PRODUCT THUMB में onerror fix करें -->
+<img class="product-thumb" 
+     src="${escapeHtml(imageSrc)}" 
+     alt="${escapeHtml(p.name)}" 
+     loading="lazy"
+     onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzIiIGhlaWdodD0iNzIiIHZpZXdCb3g9IjAgMCA3MiA3MiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzYiIGN5PSIzNiIgcj0iMzYiIGZpbGw9ImxpbmVhci1ncmFkaWVudCgxMzVkZywjOUI1Q0Y2IDAlLCAjQzg4NEZDOCAxMDAlIi8+Cjx0ZXh0IHg9IjM2IiB5PSI0OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iIGZpbGw9IndoaXRlIiBmb250LWZhbWlseT0iUG9wcGlucywgc2Fucy1zZXJpZiIgZm9udC13ZWlnaHQ9IjciIGZvbnQtc2l6ZT0iMTIiPkVycm9yPC90ZXh0Pgo8L3N2Zz4=';
+             this.style.borderColor='rgba(239,68,68,0.5)';
+             this.style.background='linear-gradient(135deg, #EF4444, #DC2626)';">
           <div>
             <div style="color: var(--primary-gold); font-weight: 700; font-size: 18px; margin-bottom: 4px;">${escapeHtml(p.name)}</div>
             <div class="small-muted">${escapeHtml(p.category || 'Uncategorized')}</div>
